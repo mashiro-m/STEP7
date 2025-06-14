@@ -10,6 +10,12 @@
 <p><strong>登録日時:</strong> {{ $company->created_at }}</p>
 <p><strong>更新日時:</strong> {{ $company->updated_at }}</p>
 
-<a href="{{ route('companies.edit', $company->id) }}" class="btn btn-primary">編集</a>
-<button type="submit"><a href="{{ route('companies.index') }}">一覧に戻る</a></button>
+<a href="{{ route('companies.edit', $company->id) }}"> <button type="button">編集</button></a>
+
+
+
+    <a href="{{ route('companies.index') }}">
+        <button type="button">一覧に戻る</button>
+    </a>
+</div>
 @endsection
