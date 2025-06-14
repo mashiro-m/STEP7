@@ -2,6 +2,9 @@
 
 use Illuminate\Support\Facades\Route;
 
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\CompanyController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -13,6 +16,15 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+
 Route::get('/', function () {
     return view('welcome');
 });
+
+Auth::routes();
+
+
+Route::resource('products', ProductController::class);
+Route::resource('companies', CompanyController::class);
+
+Route::get('/products', [ProductController::class, 'index'])->name('products.index');
