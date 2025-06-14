@@ -30,7 +30,7 @@
         </div>
 
         <div>
-            <label for="representative_name">代表者名：</label><br>
+            <label for="representative_name">代表者名<span style="color: red;">※</span>：</label><br>
             <input type="text" id="representative_name" name="representative_name" value="{{ old('representative_name') }}">
         </div>
 

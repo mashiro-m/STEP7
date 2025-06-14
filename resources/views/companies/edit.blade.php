@@ -17,5 +17,7 @@
     <input type="text" name="representative_name" value="{{ $company->representative_name }}" required><br>
 
     <button type="submit">更新</button>
+    <button type="submit"><a href="{{ route('companies.index') }}">一覧に戻る</a></button>
+
 </form>
 @endsection
