@@ -32,8 +32,11 @@ class CompanyController extends Controller
             'representative_name',
         ]));
 
+        return view('companies.create');
+
         return redirect()->route('companies.index');
     }
+
 
     public function show(Company $company)
     {

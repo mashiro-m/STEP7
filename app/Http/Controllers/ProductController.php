@@ -6,16 +6,31 @@ use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\Company;
 use Illuminate\Support\Facades\Storage;
+use App\Http\Requests\ProductRequest;
+
 
 class ProductController extends Controller
 {
     public function index(Request $request)
     {
-        $products = Product::with('company')->get();
+        $query = Product::with('company');
+    
+        // 商品名で部分一致検索
+        if ($request->filled('product_name')) {
+            $query->where('product_name', 'like', '%' . $request->product_name . '%');
+        }
+    
+        // メーカーで絞り込み
+        if ($request->filled('company_id')) {
+            $query->where('company_id', $request->company_id);
+        }
+    
+        $products = $query->get();
         $companies = Company::all();
-
+    
         return view('products.index', compact('products', 'companies'));
     }
+    
 
     public function create()
     {
@@ -23,31 +38,27 @@ class ProductController extends Controller
         return view('products.create', compact('companies'));
     }
 
-    public function store(Request $request)
+    public function store(ProductRequest $request)
     {
-        $request->validate([
-            'company_id' => 'required|exists:companies,id',
-            'product_name' => 'required|string|max:255',
-            'price' => 'required|integer|min:0',
-            'stock' => 'required|integer|min:0',
-            'comment' => 'nullable|string',
-            'img_path' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-        ]);
-
-        $data = $request->only([
-            'company_id', 'product_name', 'price', 'stock', 'comment'
-        ]);
-
-        // 画像がアップロードされた場合
-        if ($request->hasFile('img_path')) {
-            $path = $request->file('img_path')->store('images', 'public');
-            $data['img_path'] = $path;
+        
+        try {
+            $data = $request->only([
+                'company_id', 'product_name', 'price', 'stock', 'comment'
+            ]);
+    
+            if ($request->hasFile('img_path')) {
+                $path = $request->file('img_path')->store('images', 'public');
+                $data['img_path'] = $path;
+            }
+    
+            Product::create($data);
+    
+            return redirect()->route('products.index')->with('success', '商品を登録しました');
+        } catch (\Exception $e) {
+            return back()->with('error', '商品登録に失敗しました：' . $e->getMessage());
         }
-
-        Product::create($data);
-
-        return redirect()->route('products.index')->with('success', '商品を登録しました');
     }
+    
 
     public function show(Product $product)
     {
@@ -61,40 +72,35 @@ class ProductController extends Controller
         return view('products.edit', compact('product', 'companies'));
     }
 
-    public function update(Request $request, Product $product)
+    public function update(ProductRequest $request, Product $product)
     {
-        $request->validate([
-            'company_id' => 'required|exists:companies,id',
-            'product_name' => 'required|string|max:255',
-            'price' => 'required|integer|min:0',
-            'stock' => 'required|integer|min:0',
-            'comment' => 'nullable|string',
-            'img_path' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-        ]);
-
-        $data = $request->only([
-            'company_id', 'product_name', 'price', 'stock', 'comment'
-        ]);
-
-        // 画像がアップロードされた場合
-        if ($request->hasFile('img_path')) {
-            // 古い画像を削除（任意）
-            if ($product->img_path && Storage::disk('public')->exists($product->img_path)) {
-                Storage::disk('public')->delete($product->img_path);
+       
+    
+        try {
+            $data = $request->only([
+                'company_id', 'product_name', 'price', 'stock', 'comment'
+            ]);
+    
+            if ($request->hasFile('img_path')) {
+                if ($product->img_path && Storage::disk('public')->exists($product->img_path)) {
+                    Storage::disk('public')->delete($product->img_path);
+                }
+    
+                $path = $request->file('img_path')->store('images', 'public');
+                $data['img_path'] = $path;
             }
-
-            $path = $request->file('img_path')->store('images', 'public');
-            $data['img_path'] = $path;
+    
+            $product->update($data);
+    
+            return redirect()->route('products.index')->with('success', '商品を更新しました');
+        } catch (\Exception $e) {
+            return back()->with('error', '商品更新に失敗しました：' . $e->getMessage());
         }
-
-        $product->update($data);
-
-        return redirect()->route('products.index')->with('success', '商品を更新しました');
     }
-
+    
     public function destroy(Product $product)
-    {
-        // 画像も削除（任意）
+{
+    try {
         if ($product->img_path && Storage::disk('public')->exists($product->img_path)) {
             Storage::disk('public')->delete($product->img_path);
         }
@@ -102,5 +108,10 @@ class ProductController extends Controller
         $product->delete();
 
         return redirect()->route('products.index')->with('success', '商品を削除しました');
+    } catch (\Exception $e) {
+        return back()->with('error', '商品削除に失敗しました：' . $e->getMessage());
     }
 }
+
+}
+

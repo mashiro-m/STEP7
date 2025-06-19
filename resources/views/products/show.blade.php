@@ -11,8 +11,6 @@
     <p><strong>在庫数:</strong> {{ $product->stock }} 個</p>
     <p><strong>コメント</strong> {{ $product->comment }}</p>
     <p><strong>商品画像</strong> {{ $product->img_path }}</p>
-    <p><strong>登録日時:</strong> {{ $product->created_at }}</p>
-    <p><strong>更新日時:</strong> {{ $product->updated_at }}</p>
     
     <button type="submit"><a href="{{ route('products.edit', $product->id) }}">編集</a></button>
     <button type="submit"><a href="{{ route('products.index') }}">戻る</a></button>

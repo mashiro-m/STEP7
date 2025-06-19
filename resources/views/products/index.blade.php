@@ -4,14 +4,17 @@
     <h1>商品一覧</h1>
 
     <p><form method="GET" action="{{ route('products.index') }}">
-        <input type="text" name="product_name" placeholder="商品名">
-        <select name="company_id">
-            <option value="">--メーカーを選択--</option>
-            @foreach($companies as $company)
-            <option value="{{ $company->id }}">{{ $company->company_name }}</option>
+    <input type="text" name="product_name" placeholder="商品名" value="{{ request('product_name') }}">
 
-            @endforeach
-        </select>
+<select name="company_id">
+    <option value="">--メーカーを選択--</option>
+    @foreach($companies as $company)
+        <option value="{{ $company->id }}" {{ request('company_id') == $company->id ? 'selected' : '' }}>
+            {{ $company->company_name }}
+        </option>
+    @endforeach
+</select>
+
         <button type="submit">検索</button>
     </form></p>
 
@@ -25,7 +28,6 @@
                 <th>在庫数</th>
                 <th>メーカー</th>
                 <th>詳細</th>
-                <th>編集</th>
                 <th>削除</th>
                 
             </tr>
@@ -36,13 +38,18 @@
             @foreach($products as $product)
             <tr>
                 <td>{{ $product->id }}</td>
-                <td><img src="{{ asset('storage/' . $product->image_path) }}" width="80"></td>
+                <td>
+            @if($product->img_path)
+                 <img src="{{ asset('storage/' . $product->img_path) }}" width="80">
+            @else
+                画像なし
+             @endif
+                </td>
                 <td>{{ $product->product_name }}</td>
                 <td>{{ $product->price }}円</td>
                 <td>{{ $product->stock }}個</td>
                 <td>{{ $product->company->company_name ?? '未設定' }}</td>
                 <td> <button type="submit"><a href="{{ route('products.show', $product->id) }}">詳細</a></button></td>
-                <td><button type="submit"><a href="{{ route('products.edit', $product->id) }}">編集</a></button></td>
                 <td>
                     <form method="POST" action="{{ route('products.destroy', $product->id) }}">
                         @csrf
