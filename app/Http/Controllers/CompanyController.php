@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Company;
+use App\Http\Requests\CompanyRequest;
 
 class CompanyController extends Controller
 {
@@ -18,25 +18,15 @@ class CompanyController extends Controller
         return view('companies.create');
     }
 
-    public function store(Request $request)
+    public function store(CompanyRequest $request)
     {
-        $request->validate([
-            'company_name' => 'required|string|max:255',
-            'street_address' => 'required|string|max:255',
-            'representative_name' => 'required|string|max:255',
-        ]);
-
-        Company::create($request->only([
-            'company_name',
-            'street_address',
-            'representative_name',
-        ]));
-
-        return view('companies.create');
-
-        return redirect()->route('companies.index');
+        try {
+            Company::create($request->validated());
+            return redirect()->route('companies.index')->with('success', '会社を登録しました');
+        } catch (\Exception $e) {
+            return back()->with('error', '登録に失敗しました：' . $e->getMessage());
+        }
     }
-
 
     public function show(Company $company)
     {
@@ -48,26 +38,19 @@ class CompanyController extends Controller
         return view('companies.edit', compact('company'));
     }
 
-    public function update(Request $request, Company $company)
+    public function update(CompanyRequest $request, Company $company)
     {
-        $request->validate([
-            'company_name' => 'required|string|max:255',
-            'street_address' => 'required|string|max:255',
-            'representative_name' => 'required|string|max:255',
-        ]);
-
-        $company->update($request->only([
-            'company_name',
-            'street_address',
-            'representative_name',
-        ]));
-
-        return redirect()->route('companies.index');
+        try {
+            $company->update($request->validated());
+            return redirect()->route('companies.index')->with('success', '会社情報を更新しました');
+        } catch (\Exception $e) {
+            return back()->with('error', '更新に失敗しました：' . $e->getMessage());
+        }
     }
 
     public function destroy(Company $company)
     {
         $company->delete();
-        return redirect()->route('companies.index');
+        return redirect()->route('companies.index')->with('success', '会社を削除しました');
     }
 }

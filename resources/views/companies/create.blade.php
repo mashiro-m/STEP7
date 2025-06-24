@@ -21,12 +21,12 @@
 
         <div>
             <label for="company_name">会社名<span style="color: red;">※</span>：</label><br>
-            <input type="text" id="company_name" name="company_name" value="{{ old('company_name') }}" required>
+            <input type="text" id="company_name" name="company_name" value="{{ old('company_name') }}" >
         </div>
 
         <div>
             <label for="street_address">住所<span style="color: red;">※</span>：</label><br>
-            <input type="text" id="street_address" name="street_address" value="{{ old('street_address') }}" required>
+            <input type="text" id="street_address" name="street_address" value="{{ old('street_address') }}" >
         </div>
 
         <div>

@@ -19,12 +19,12 @@
 
         <p><div>
             {!! '<label for="product_name">商品名 <span style="color:red;">※</span>：</label>' !!}
-            <input type="text" id="product_name" name="product_name" value="{{ old('product_name') }}" required>
+            <input type="text" id="product_name" name="product_name" value="{{ old('product_name') }}" >
         </div></p>
 
         <p><div>
             {!! '<label for="company_id">メーカー <span style="color:red;">※</span>：</label>' !!}
-            <select id="company_id" name="company_id" required>
+            <select id="company_id" name="company_id" >
                 <option value="">選択してください</option>
                 @foreach ($companies as $company)
                     <option value="{{ $company->id }}" {{ old('company_id') == $company->id ? 'selected' : '' }}>
@@ -36,12 +36,12 @@
 
         <p><div>
             {!! '<label for="price">価格 <span style="color:red;">※</span>：</label>' !!}
-            <input type="number" id="price" name="price" value="{{ old('price') }}" required>
+            <input type="number" id="price" name="price" value="{{ old('price') }}" >
         </div></p>
 
         <p><div>
             {!! '<label for="stock">在庫数 <span style="color:red;">※</span>：</label>' !!}
-            <input type="number" id="stock" name="stock" value="{{ old('stock') }}" required>
+            <input type="number" id="stock" name="stock" value="{{ old('stock') }}" 
         </div></p>
 
         <p><div>

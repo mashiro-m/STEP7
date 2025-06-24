@@ -11,9 +11,6 @@ Route::get('/', function () {
 
 Auth::routes();
 
-// 🔽 CompanyController のルートは個別指定していなければ resource のままでOK
-Route::resource('companies', CompanyController::class);
-
 // 🔽 ProductController のルートは個別に指定
 Route::get('/companies/create', [CompanyController::class, 'create'])->name('companies.create');
 Route::get('/products', [ProductController::class, 'index'])->name('products.index');

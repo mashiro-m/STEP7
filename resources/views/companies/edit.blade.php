@@ -9,17 +9,17 @@
 
     <p>
         <label>会社名 <span style="color: red;">※</span>:</label>
-        <input type="text" name="company_name" value="{{ $company->company_name }}" required>
+        <input type="text" name="company_name" value="{{ $company->company_name }}" >
     </p>
 
     <p>
         <label>住所 <span style="color: red;">※</span>:</label>
-        <input type="text" name="street_address" value="{{ $company->street_address }}" required>
+        <input type="text" name="street_address" value="{{ $company->street_address }}" >
     </p>
 
     <p>
         <label>代表者名 <span style="color: red;">※</span>:</label>
-        <input type="text" name="representative_name" value="{{ $company->representative_name }}" required>
+        <input type="text" name="representative_name" value="{{ $company->representative_name }}" >
     </p>
 
     <button type="submit">更新</button>
