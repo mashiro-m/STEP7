@@ -3,20 +3,26 @@
 @section('content')
     <h1>商品一覧</h1>
 
-    <p><form method="GET" action="{{ route('products.index') }}">
-    <input type="text" name="product_name" placeholder="商品名" value="{{ request('product_name') }}">
+    <form id="search-form" method="GET" action="{{ route('products.index') }}">
+    <input type="text" name="product_name" placeholder="商品名">
 
-<select name="company_id">
-    <option value="">--メーカーを選択--</option>
-    @foreach($companies as $company)
-        <option value="{{ $company->id }}" {{ request('company_id') == $company->id ? 'selected' : '' }}>
-            {{ $company->company_name }}
-        </option>
-    @endforeach
-</select>
+    <select name="company_id">
+        <option value="">--メーカーを選択--</option>
+        @foreach($companies as $company)
+            <option value="{{ $company->id }}">{{ $company->company_name }}</option>
+        @endforeach
+    </select>
 
-        <button type="submit">検索</button>
-    </form></p>
+    <input type="number" name="price_min" placeholder="価格（下限）">
+    <input type="number" name="price_max" placeholder="価格（上限）">
+
+    <input type="number" name="stock_min" placeholder="在庫（下限）">
+    <input type="number" name="stock_max" placeholder="在庫（上限）">
+
+    <button type="submit">検索</button>
+</form>
+
+
 
     <table>
         <thead>
@@ -61,4 +67,28 @@
             @endforeach
         </tbody>
     </table>
+
+    <script>
+$(document).ready(function () {
+    $('#search-form').on('submit', function (e) {
+        e.preventDefault(); // フォームの通常送信を止める
+
+        $.ajax({
+            url: "{{ route('products.index') }}",
+            type: "GET",
+            data: $(this).serialize(), // フォーム内の入力値をまとめて送る
+            dataType: "html",
+            success: function (response) {
+                // 成功時にテーブルだけ更新
+                const newBody = $(response).find("table tbody").html();
+                $("table tbody").html(newBody);
+            },
+            error: function () {
+                alert("検索に失敗しました");
+            }
+        });
+    });
+});
+</script>
+
 @endsection
