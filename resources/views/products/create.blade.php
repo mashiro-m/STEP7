@@ -41,7 +41,7 @@
 
         <p><div>
             {!! '<label for="stock">在庫数 <span style="color:red;">※</span>：</label>' !!}
-            <input type="number" id="stock" name="stock" value="{{ old('stock') }}" 
+            <input type="number" id="stock" name="stock" value="{{ old('stock') }}" >
         </div></p>
 
         <p><div>
