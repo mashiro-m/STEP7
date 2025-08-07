@@ -27,69 +27,67 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.31.3/js/jquery.tablesorter.min.js"></script>
 
     <script>
-   $(document).ready(function () {
-  const $table = $("#product-table");
+  $(document).ready(function () {
+    const $table = $("#product-table");
 
-  // tablesorterを使うのは「一覧ページ」だけ
-  if ($table.length > 0 && typeof $table.tablesorter === 'function') {
-    $table.tablesorter({
-      sortList: [[0, 1]],
-      headers: {
-        1: { sorter: false },
-        6: { sorter: false },
-        7: { sorter: false },
-      }
+    // tablesorter（一覧ページのみ）
+    if ($table.length > 0 && typeof $table.tablesorter === 'function') {
+      $table.tablesorter({
+        sortList: [[0, 1]],
+        headers: {
+          1: { sorter: false },
+          6: { sorter: false },
+          7: { sorter: false },
+        }
+      });
+    }
+
+    // ✅ 検索フォーム Ajax送信（ここに入れる）
+    $('#search-form').on('submit', function (e) {
+      e.preventDefault();
+      $.ajax({
+        url: "{{ route('products.index') }}",
+        type: "GET",
+        data: $(this).serialize(),
+        dataType: "html",
+        success: function (response) {
+          const newBody = $(response).find("table tbody").html();
+          $("table tbody").html(newBody);
+          $("#product-table").trigger("update");
+        },
+        error: function () {
+          alert("検索に失敗しました");
+        }
+      });
     });
-  }
-});
 
+    // ✅ 削除ボタン Ajax（これもここに入れてOK）
+    $(document).on('click', '.delete-button', function () {
+      if (!confirm('本当に削除しますか？')) return;
 
-        // 検索フォーム Ajax送信
-        $('#search-form').on('submit', function (e) {
-            e.preventDefault();
-            $.ajax({
-                url: "{{ route('products.index') }}",
-                type: "GET",
-                data: $(this).serialize(),
-                dataType: "html",
-                success: function (response) {
-                    const newBody = $(response).find("table tbody").html();
-                    $("table tbody").html(newBody);
-                    $("#product-table").trigger("update");
-                },
-                error: function () {
-                    alert("検索に失敗しました");
-                }
-            });
-        });
+      const productId = $(this).data('id');
 
-        // 削除ボタン Ajax
-        $(document).on('click', '.delete-button', function () {
-        if (!confirm('本当に削除しますか？')) return;
+      $.ajax({
+        url: `products/${productId}`,
+        type: 'POST',
+        data: {
+          _method: 'DELETE',
+          _token: '{{ csrf_token() }}'
+        },
+        success: function (response) {
+          alert('削除成功');
+          location.reload();
+        },
+        error: function (xhr, status, error) {
+          console.error('削除失敗:', error);
+          console.log('レスポンス内容:', xhr.responseText);
+          alert('削除に失敗しました');
+        }
+      });
+    });
+  });
+</script>
 
-        const productId = $(this).data('id');
-
-        $.ajax({
-            url: `products/${productId}`,
-            type: 'POST',
-            data: {
-                _method: 'DELETE',
-                _token: '{{ csrf_token() }}'
-            },
-            success: function (response) {
-                alert('削除成功');
-                location.reload();
-            },
-            error: function (xhr, status, error) {
-                console.error('削除失敗:', error);
-                console.log('レスポンス内容:', xhr.responseText);
-                alert('削除に失敗しました');
-            }
-});
-
-        });
-    
-    </script>
 </head>
 @yield('scripts')
 <body>
